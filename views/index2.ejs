@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/students">Students</a>
+            <a href="/groups">Groups</a>
+        </nav>
+    </header>
+    <main>
+        <h1>LIST OF GROUPS</h1>
+         <% for(let i = 0; i< groupTab.length; i++){ %>
+            <ul>
+            <h3><%= groupTab[i].projet %></h3>
+            <% for(let y = 0; y< groupTab[i].group.length; y++){ %>
+                <li><%= groupTab[i].group[y] %></li>
+                <%} %>
+            </ul>
+                <%} %>
+                
+        
+        <form action="/groups" method="POST">
+        <input name="projet" placeholder="Enter a new project" type="text" required>
+        <input name="number" placeholder="Number of people in each group" type="text" required>
+        <button type="submit">ADD</button>
+    </form>
+    </main>
+    
+</body>
+</html>

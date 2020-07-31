@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/students">Students</a>
+            <a href="/groups">Groups</a>
+        </nav>
+    </header>
+    <main>
+        <h1>LIST OF STUDENTS</h1>
+        <ul>
+            <%  for(let i = 0; i< studentTab.length; i++){ %>
+                <li><%= studentTab[i]%></li> 
+                <%} %>
+        </ul>
+        <form action="/students" method="POST">
+            <input name="name" placeholder="Enter a new Student" type="text" required>
+            <button type="submit">ADD</button>
+        
+        </form>
+    </main>
+    
+</body>
+</html>

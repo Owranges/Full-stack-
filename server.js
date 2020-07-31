@@ -1,134 +1,161 @@
-const MongoClient = require("mongodb").MongoClient;       
-const express = require('express'); 
-const { Logger } = require("mongodb");
-let app = express();
-const url = 'mongodb://localhost:27017/';                  
-const dbName = 'Groupe_data_base';                
-let client;
+let express = require('express'); 
+let fetch = require('node-fetch');  
+const { json } = require('express');
+// let ejs = require('ejs');
+var app = express();  
 app.use(express.urlencoded({ extended: true}));
+let studentTab = []
+let groupTab = []
+// let sortir = []
 
 
-async function database(){                    
-    try{
-        client = await MongoClient.connect(url, { useNewUrlParser: true , useUnifiedTopology: true });
-        db = client.db(dbName);
-        await db.createCollection("Students");
-        await db.createCollection("Groups");
-    }catch(e){
-        console.log(e);
-     }
-    //  finally{
-    //     client.close();
-    // } 
+app.get('/students', async function (req, res){
+   let studentLi = await dataStudents(true)
+  
+   res.render('index1.ejs', {studentTab : studentLi});
 
-}
-database(); 
+});
 
-async function addStudent(student) {
-    try { 
-        await db.collection('Students').insertOne({name : student});
-    }catch(e){
+app.get('/groups', async function (req, res){
+    let groupLi = await dataGroups()
+    res.render('index2.ejs', {groupTab : groupLi});
+ 
+ });
 
-    }
-}
+app.post('/students', async function (req, res){
+    fetch('http://localhost:3000/students',{
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+        body :  JSON.stringify({name : req.body.name}),
+    })
+    .then(function (data) {  
+        console.log('Request success: ', data);  
+      })  
+    .catch(function (error) {  
+        console.log('Request failure: ', error);  
+      });
+    
+   res.redirect('/students');
+} ); 
 
-async function getStudent(value) {
+app.post('/groups', async function (req, res){
+    
+    fetch('http://localhost:3000/groups',{
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+        body :  JSON.stringify({projet : req.body.projet, number : req.body.number, group : shuffle(req.body.number, await dataStudents(true))}),
+    })
+    
+    .then(function (data) {  
+        console.log('Request success: ', data);  
+      })  
+    .catch(function (error) {  
+        console.log('Request failure: ', error);  
+      });
+    
+   res.redirect('/groups');
+} ); 
+
+
+async function dataStudents(onlyName) {
     try {
-        let studentList = await db.collection('Students').find({name : value}).toArray();
-        
-        return await studentList
-    }catch(e){
-
-    }
-}
-
-async function deleteStudent(value) {
-    try {
-        await db.collection('Students').deleteOne({name : value})
-    }catch(e){
-
-    }
-}
-async function deleteGroups(value) {
-    try {
-        await db.collection('Groups').deleteOne({projet : value})
-    }catch(e){
-
-    }
-}
-
-async function addGroups(name){
-    try {
-    let grouptab = await db.collection("Students").find().toArray();
-    await db.collection('Groups').insertOne({projet : name, group : grouptab, nombre : grouptab.length});
+        let studentTab = []
+        let Students = await fetch('http://localhost:3000/students');
+        let StudentsParse = await Students.json();
+        for(let i = 0; i<StudentsParse.length; i++){
+        studentTab.push(StudentsParse[i].name)
+     
+        }
+        /* condition boolean */
+        return  onlyName ? studentTab : StudentsParse /* renvoie les noms si True */
+        /* renvoie tout l'objet si False */
     } catch (error) {
-        
+        console.log(error);
     }
-}
+ }
 
-async function getGroups() {
-    try {
-        let groupsList = await db.collection('Groups').find().toArray();
-        return await groupsList
-    }catch(e){
-
-    }
-}
-
-
-app.post('/students', function(req, res) { 
-     addStudent(req.body.name);
-    console.log(req.body);
-    res.status(200).send("aa");
-});  
+ async function dataGroups() {
+     try { 
+         let groupTab = []
+        let groups = await fetch('http://localhost:3000/groups');
+        let groupsParse = await groups.json();
+  
+        return groupsParse
+     } catch (error) {
+        console.log(error);
+        return []
+     }
+     
+ }
 
 
-app.get('/student', async function(req, res) {
-    res.status(200).send(await getStudent());
-}); 
-
-app.delete('/student/:name',async function (req, res) { 
-    let studentList = await getStudent(req.params.name);
-    
-    if(studentList.length != 0){
-        deleteStudent(req.params.name)
-        res.status(200).send(req.params.name + " has been deleted")
-    
-    }else {
-        res.status(404).send("This student " + req.params.name + " doesn't exist")
-    }
-});
-
-app.post('/groups/', async function (req, res) {
-    addGroups((req.body.projet))
-    res.status(200).send("Well");
-});
-
-app.get('/groups/', async function (req, res) {
-    res.status(200).send(await getGroups());
-})
 
 
-app.get("/groups/:name", async function (req, res) {
-    let groupInfo = await db.collection("Groups").find({projet : req.params.name}).toArray();
-    if(groupInfo.length != 0 ){
-        res.status(200).send(groupInfo)
-        
-    } else {
-        res.status(404).send("This group doesn't exist")
-    }
-});
 
-app.delete("/groups/:name", async function (req,res) {
-    let groupInfo = await db.collection("Groups").find({projet : req.params.name}).toArray();
-    if(groupInfo.length != 0 ){
-        let groupName = await deleteGroups(req.params.name);
-        res.status(200).send('This group ' + req.params.name + ' has been deleted')
-    }else{
-        res.status(404).send("This group doesn't exist")
-    }
-})
-
-app.listen(3000, function() {
+app.listen(8000, function() {
     console.log('hello');
 });
+
+
+
+
+  function shuffle(number, array) {
+     
+        let testtab = []
+       
+        array = array.sort(() => Math.random() - 0.5);
+    
+            while(array.length > 0){
+         
+               let studentSplice =  array.splice(0,number)
+         
+               testtab.push(studentSplice)
+            }
+   
+        return testtab
+      
+    }
+    
+  
+// async function randomGroup(number){
+//     try {
+//     let studentTab = await dataStudents(true);
+//     console.log(studentTab);
+//     let randomStudent = [];
+
+//     console.log(studentTab);
+    // for(let i = 0; i<studentTab.length; i++ ){
+
+    //     for(let y = 0; y<number; y++){
+
+    //     let nbrAlea =  studentTab[Math.floor(Math.random() * studentTab.length)];
+    //     let sortir =  studentTab.splice(i,number)
+    //     randomStudent.push( sortir)
+        
+        
+    //     }
+
+    // }
+//     console.log( test);
+//     } catch (error) {
+//         console.log(error);
+//     }
+    
+
+// }
+
+
+// async function test(projectGroup){
+//     for(let i = 0; i< projectGroup.length; i++){ 
+//         for(let y = 0; y< projectGroup[i].group.length; y++){ 
+//         await projectGroup[i].group[y];
+//         console.log(projectGroup[i].group[y]);
+//         }
+//     }
+// }
