@@ -1,6 +1,7 @@
 #Grpoup Generator
 
-![](https://img.shields.io/badge/made%20with-javascript-yellow?logo=javascript) ![](https://img.shields.io/badge/made%20with-MongoDB-green?logo=MongoDB) ![](https://img.shields.io/badge/express-green?)  ![](https://img.shields.io/badge/fetch-black?) 
+![](https://img.shields.io/badge/made%20with-javascript-yellow?logo=javascript) ![](https://img.shields.io/badge/made%20with-MongoDB-green?logo=MongoDB) ![](https://img.shields.io/badge/express-green?)  ![](https://img.shields.io/badge/fetch-black?) ![](https://img.shields.io/badge/json-blue?) ![](https://img.shields.io/badge/ejs-success?) 
+
 
 ## Technos
 
