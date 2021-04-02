@@ -1,5 +1,7 @@
 #Grpoup Generator
 
+![](https://img.shields.io/badge/made%20with-javascript-yellow?logo=javascript)
+
 ## Technos
 
 ### Back-end
