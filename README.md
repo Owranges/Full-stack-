@@ -24,11 +24,22 @@
 * javascript
 
 
-### Projet: missing the CSS
+### Status
 
+* projet: missing the css
 
 ### Contact
 
 morveunkraps@gmail.com
+
+<a href="https://linkedin.com/in/laure-adrienne-njinga">
+    <img alt="linkedin" src="https://img.shields.io/badge/linkedin-blue?logo=linkedin"/>
+</a> 
+
+
+Frank Owen
+
+
+
 
 
